@@ -29,6 +29,13 @@ class Window:
 
         #photos
         self.imagesReferences = {}
+
+        #self.imagesReferences[0] = PhotoImage("Ressources/0.png")
+        #self.imagesReferences[1] = PhotoImage("Ressources/1.png")
+        #self.image = PhotoImage("Ressources/1.png")
+        #self.test = None
+        #photo = PhotoImage(file = 'C:/SudokuTemp/Ressources/1.png')
+        #self.canvas.create_image(0,0, image=photo)
         
         self.updateCanvas()
 
@@ -42,22 +49,29 @@ class Window:
     def startSolving (self):
         """Launch the solving process"""
         a=1
-
+        
     def updateCanvas (self):
         """Prints the sudoku matrix"""
         x = 0
         y = 0
         self.canvas.delete(all)
         #images
+        #for i in range(self.MAX):
+        #    for j in range(self.MAX):
+        #        #photo = PhotoImage(file = "Ressources/1.png")
+        #        #self.imagesReferences[i,j] = self.canvas.create_image(x, y, image = photo) # % SUDO[i,j]))
+        #        #print(self.imagesReferences[i,j])
+        #        print(self.sudoku.matrix[i, j])
+        #        x=x+(self.canvasSize/self.MAX)
+        #        if x%self.canvasSize == 0:
+        #            x=0
+        #            y=y+(self.canvasSize/self.MAX)
+        #self.test = self.canvas.create_image(10, 10, image = self.image)
+        print("\n\n\n\n")
         for i in range(self.MAX):
-            for j in range(self.MAX):
-                photo = PhotoImage(file = "Ressources/1.png")
-                self.imagesReferences[i,j] = self.canvas.create_image(x, y, image = photo) # % SUDO[i,j]))
-                #print(self.imagesReferences[i,j])
-                x=x+(self.canvasSize/self.MAX)
-                if x%self.canvasSize == 0:
-                    x=0
-                    y=y+(self.canvasSize/self.MAX)
+            print("\t%d\t%d\t%d\t%d\t%d\t%d\t%d\t%d\t%d\t" %(self.sudoku.matrix[i, 0], self.sudoku.matrix[i, 1], self.sudoku.matrix[i, 2],
+                                                               self.sudoku.matrix[i, 3], self.sudoku.matrix[i, 4], self.sudoku.matrix[i ,5], 
+                                                               self.sudoku.matrix[i, 6], self.sudoku.matrix[i, 7], self.sudoku.matrix[i, 8]))
         #separators
         for i in range(self.MAX):
             dash=i*self.canvasSize/self.MAX
