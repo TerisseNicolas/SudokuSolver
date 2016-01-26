@@ -29,25 +29,35 @@ class Sudoku:
     def loadContent (self):
         """Loads sudoku data"""
         fillPersoMatrix(self.matrix)
+        self.emptyFrame = self.emptyFrameNumber()
+    def decreaseEmptyFrameNumber (self):
+        """Decrease the number of empty frames"""
+        self.emptyFrame -= 1
     def solve(self):
         """Return (row,col) couple if an emptyFrame has been filled, (-1,-1) otherwise"""
         flag = True
-        #self.emptyFrame = self.emptyFrameNumber()
-        #if(self.emptyFrame != 0):
-        (x,y) = (-1,-1)
-        try:
-            assert True == self.validMatrix()
-        except AssertionError:
-            print ("Matrix not valid anymore")
+        if(self.emptyFrame != 0):
+            (x,y) = (-1,-1)
+            try:
+                assert True == self.validMatrix()
+            except AssertionError:
+                print ("Matrix not valid anymore")
+            else:
+                (x, y) = self.oneEmptyFrameStrategy()
+                if((x, y) != (-1, -1)):
+                    self.decreaseEmptyFrameNumber()
+                    return (x,y)
+                (x,y) = self.TwoEmptyFrameStrategyMoveOne()
+                if((x, y) != (-1, -1)):
+                    self.decreaseEmptyFrameNumber()
+                    return (x,y)
+                #(x,y) = self.TwoEmptyFrameStrategyMoveTwo()
+                #if((x, y) != (-1, -1)):
+                #    self.decreaseEmptyFrameNumber()
+                #    return (x,y)
+            return (-1,-1)
         else:
-            (x, y) = self.oneEmptyFrameStrategy()
-            if((x, y) != (-1, -1)):
-                return (x,y)
-            #if(self.TwoEmptyFrameStrategyMoveOne() != (-1, -1)):
-            #    return True
-            #if(self.TwoEmptyFrameStrategyMoveTwo() != (-1, -1)):
-            #    return True
-        return (-1,-1)
+            return (-1,-1)
     def debug (self):
         """Debuging function"""
         print(self.oneEmptyFrameStrategy())
@@ -83,6 +93,7 @@ class Sudoku:
                 if(self.matrix[i,j] == number):
                     return (i,j)
         return (-1,-1)
+    
     def rowOneMissingFrame (self, row):
         """Return the column index of the frame if only one is missing, -1 otherwise"""
         count = 0
@@ -120,6 +131,39 @@ class Sudoku:
             return index
         else:
             return (-1,-1)
+    
+    def rowTwoMissingFrame (self, row):
+        """Return the column indexes of the framse if two are missing, (-1,-1) otherwise"""
+        count = 0
+        index1 = -1
+        index2 = -1
+        for j in range(9):
+            if(self.matrix[row,j] == 0):
+                count +=1
+                if(index1 == -1):
+                    index1 = j
+                else:
+                    index2 = j
+        if(count == 2):
+            return (index1, index2)
+        else:
+            return (-1,-1)   
+    def colTwoMissingFrame (self, col):
+        """Return the row indexes of the framse if two are missing, (-1,-1) otherwise"""
+        count = 0
+        index1 = -1
+        index2 = -1
+        for i in range(9):
+            if(self.matrix[i, col] == 0):
+                count +=1
+                if(index1 == -1):
+                    index1 = j
+                else:
+                    index2 = j
+        if(count == 2):
+            return (index1, index2)
+        else:
+            return (-1,-1)   
 
     # =======================================================================================
     # Validity Functions ====================================================================
@@ -205,6 +249,35 @@ class Sudoku:
             if (not found):
                 return k
         return 0
+    
+    def missingNumberTwoEmptyFrameRow (self, row):
+        """Return the two missing numbers of the row"""
+        number1 = -1
+        for k in range(1, 10):
+            found = False
+            for j in range(9):
+                if(self.matrix[row, j] == k):
+                    found = True
+            if (not found):
+                if(number1 == -1):
+                    number1 = k
+                else:
+                    return (number1,k)
+        return (0,0)
+    def missingNumberTwoEmptyFrameCol (self, col):
+        """Return the two missing numbers of the col"""
+        number1 = -1
+        for k in range(1, 10):
+            found = False
+            for i in range(9):
+                if(self.matrix[i, col] == k):
+                    found = True
+            if (not found):
+                if(number1 == -1):
+                    number1 = k
+                else:
+                    return (number1,k)
+        return (0,0)
 
     # =======================================================================================
     # Strategies Functions ==================================================================
@@ -241,7 +314,22 @@ class Sudoku:
                     else:
                         return (row, col)
         return (-1,-1)
-    #def TwoEmptyFrameStrategyMoveOne (self):
+    def TwoEmptyFrameStrategyMoveOne (self):
+        """Return the (row,col) position of the filled frame, (-1,-1) otherwise"""
+        for i in range(9):
+            (col1,col2) = self.rowTwoMissingFrame(i)
+            if((col1,col2) != (-1,-1)):
+                (row,col) = self.fillTwoEmptyFrameRowStrategyMoveOne(i, col1, col2)
+                if((row,col) != (-1,-1)):
+                    return (row,col)
+        for j in range(9):
+            (row1,row2) = self.colTwoMissingFrame(j)
+            if((row1,row2) != (-1,-1)):
+                (row,col) = self.fillTwoEmptyFrameColStrategyMoveOne(j, row1, row2)
+                if((row,col) != (-1,-1)):
+                    return (row,col)
+        return (-1,-1)
+
     #def TwoEmptyFrameStrategyMoveTwo (self):
 
     # =======================================================================================
@@ -282,3 +370,40 @@ class Sudoku:
     # =======================================================================================
     # TwoEmptyFrameStrategyMoveOne Functions ================================================
     # =======================================================================================
+
+    def fillTwoEmptyFrameRowStrategyMoveOne(self, row, col1, col2):
+        """Return the (row,col) of the filled frame, (-1,-1) otherwise"""
+        (number1,number2) = self.missingNumberTwoEmptyFrameRow(row)
+        if((number1,number2) == (0,0)):
+            return (-1,-1)
+        if(self.inColumn(col1, number1)):
+            self.matrix[row, col2] = number1
+            return (row,col2)
+        if(self.inColumn(col2, number1)):
+            self.matrix[row, col1] = number1
+            return(row,col1)
+        if(self.inColumn(col1, number2)):
+            self.matrix[row, col2] = number2
+            return (row, col2)
+        if(self.inColumn(col2, number2)):
+            self.matrix[row,col1] = number2
+            return (row,col2)
+        return (-1,-1)
+    def fillTwoEmptyFrameColStrategyMoveOne(self, col, row1, row2):
+        """Return the (row,col) of the filled frame, (-1,-1) otherwise"""
+        (number1,number2) = self.missingNumberTwoEmptyFrameCol(col)
+        if((number1,number2) == (-1,-1)):
+            retrun (-1,-1)
+        if(self.inRow(row1, number1)):
+            self.matrix[row2, col] = number1
+            return (row2, col)
+        if(self.inRow(row2, number1)):
+            self.matrix[row1, col] = number1
+            return (row1,col)
+        if(self.inRow(row1, number2)):
+            self.matrix[row2, col] = number2
+            return (row2,col)
+        if(self.inRow(row2, number2)):
+            self.matrix[row1, col] = number2
+            return (row1,col)
+        return (-1,-1)

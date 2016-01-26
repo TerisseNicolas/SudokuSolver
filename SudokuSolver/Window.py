@@ -84,11 +84,11 @@ class Window:
         x = 33.5
         if((a,b) != (-1,-1)):
             unit = self.canvasSize/self.MAX
-            self.canvas.create_rectangle(a*unit, b*unit, 67 + a*unit, 67 + b*unit, fill = "red")
+            self.canvas.create_rectangle(b*unit, a*unit, 67 + b*unit, 67 + a*unit, fill = "red")
         for i in range(self.MAX):
             y = 33.5
             for j in range(self.MAX):
-                self.canvas.create_image(x, y, image = self.photo[self.sudoku.matrix[i, j]])
+                self.canvas.create_image(x, y, image = self.photo[self.sudoku.matrix[j, i]])
                 y = y + (self.canvasSize/self.MAX)
             x = x + (self.canvasSize/self.MAX)
 

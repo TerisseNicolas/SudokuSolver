@@ -91,9 +91,9 @@ def fillPersoMatrix(matrix):
         matrix[0,6]=7
         matrix[0,7]=3
         matrix[0,8]=9 
-        matrix[1,0]=3
-        matrix[1,1]=9
-        matrix[1,2]=7
+        matrix[1,0]=0 #3
+        matrix[1,1]=0 #9
+        matrix[1,2]=0 #7
         matrix[1,3]=5
         matrix[1,4]=0 #4
         matrix[1,5]=6
@@ -101,8 +101,8 @@ def fillPersoMatrix(matrix):
         matrix[1,7]=2
         matrix[1,8]=8 
         matrix[2,0]=8
-        matrix[2,1]=2
-        matrix[2,2]=1
+        matrix[2,1]=0 #2
+        matrix[2,2]=0 #1
         matrix[2,3]=9
         matrix[2,4]=7
         matrix[2,5]=3
