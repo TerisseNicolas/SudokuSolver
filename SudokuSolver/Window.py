@@ -48,7 +48,8 @@ class Window:
 
     def startSolving (self):
         """Launch the solving process"""
-        a=1
+        self.sudoku.solve()
+        self.updateCanvas()
         
     def updateCanvas (self):
         """Prints the sudoku matrix"""
