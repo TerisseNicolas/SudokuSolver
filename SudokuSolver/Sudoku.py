@@ -164,12 +164,62 @@ class Sudoku:
         return True
 
     # =======================================================================================
+    # Access Functions ======================================================================
+    # =======================================================================================
+    
+    def missingNumberOneEmptyFrameRow (self, row):
+        """Return the missing number of the row"""
+        for k in range(1, 10):
+            found = False
+            for j in range(9):
+                if(self.matrix[row, j] == k):
+                    found = True
+            if (not found):
+                return k
+        return 0
+
+    def missingNumberOneEmptyFrameCol (self, col):
+        """Return the missing number of the col"""
+        for k in range(1, 10):
+            found = False
+            for i in range(9):
+                if(self.matrix[i, col] == k):
+                    found = True
+            if (not found):
+                return k
+        return 0
+
+    def missingNumberOneEmptyFrameBlock (self, row, col):
+        """Return the missing number of the row"""
+        for k in range(1, 10):
+            found = False
+            for i in range(3):
+                for j in range(3):
+                    if(self.matrix[row + i, col + j] == k):
+                        found = True
+            if (not found):
+                return k
+        return 0
+
+    # =======================================================================================
     # Strategies Functions ==================================================================
     # =======================================================================================
 
     #def OneEmptyFrameStrategy (self):
+    #    """Return the (row,col) position of the filled frame, (-1,-1) otherwise""" 
         
     #def TwoEmptyFrameStrategyMoveOne (self):
         
     #def TwoEmptyFrameStrategyMoveTwo (self):
+
+    # =======================================================================================
+    # OneEmptyFrameStrategy Functions =======================================================
+    # =======================================================================================
+
+    #def fillOneEmptyFrameRow (self, row):
+    #    """Fill the empty frame of the row, return True if succeed, False otherwise"""
+    #    emptyFrameColIndex = rowOneMissingFrame(row)
+    #    if(emptyFrameColIndex == -1):
+    #        return False
+        
         
