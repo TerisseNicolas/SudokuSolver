@@ -30,23 +30,24 @@ class Sudoku:
         """Loads sudoku data"""
         fillPersoMatrix(self.matrix)
     def solve(self):
+        """Return (row,col) couple if an emptyFrame has been filled, (-1,-1) otherwise"""
         flag = True
         #self.emptyFrame = self.emptyFrameNumber()
-        #self.debug()
-        while(flag): # and self.emptyFrame != 0
-            flag = False
-            try:
-                assert True == self.validMatrix()
-            except AssertionError:
-                print ("Matrix not valid anymore")
-            else:
-                while(self.oneEmptyFrameStrategy() != (-1, -1)):
-                    print("change")
-                    flag = True
-            #while(self.TwoEmptyFrameStrategyMoveOne != (-1, -1)):
-            #    flag = True
-            #while(self.TwoEmptyFrameStrategyMoveTwo != (-1, -1)):
-            #    flag = True
+        #if(self.emptyFrame != 0):
+        (x,y) = (-1,-1)
+        try:
+            assert True == self.validMatrix()
+        except AssertionError:
+            print ("Matrix not valid anymore")
+        else:
+            (x, y) = self.oneEmptyFrameStrategy()
+            if((x, y) != (-1, -1)):
+                return (x,y)
+            #if(self.TwoEmptyFrameStrategyMoveOne() != (-1, -1)):
+            #    return True
+            #if(self.TwoEmptyFrameStrategyMoveTwo() != (-1, -1)):
+            #    return True
+        return (-1,-1)
     def debug (self):
         """Debuging function"""
         print(self.oneEmptyFrameStrategy())
