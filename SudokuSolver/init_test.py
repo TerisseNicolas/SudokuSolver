@@ -83,7 +83,7 @@ def fillDefaultMatrix(matrix):
 
 def fillPersoMatrix(matrix):
         matrix[0,0]=0 #6 
-        matrix[0,1]=5
+        matrix[0,1]=0 #5
         matrix[0,2]=4
         matrix[0,3]=2
         matrix[0,4]=1

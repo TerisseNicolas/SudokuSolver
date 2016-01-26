@@ -13,8 +13,7 @@ class Window:
         self.startButton = Button(self.tkWindow, text = "Start",  state = DISABLED, command = self.startSolving)
         self.quitButton = Button(self.tkWindow, text=  "Quit", command = self.tkWindow.destroy)
         self.canvasSize = width
-        self.canvas =  Canvas(self.tkWindow, bg='white', height = self.canvasSize, width = self.canvasSize)
-        
+        self.canvas =  Canvas(self.tkWindow, bg='white', height = self.canvasSize, width = self.canvasSize)        
 
         #widgets configuration
         self.tkWindow.title(title)
@@ -22,20 +21,23 @@ class Window:
         self.tkWindow.minsize(width = width, height= width + 40)
 
         #widgets positionnement
-        self.canvas.grid(row = 1, columnspan = 4)
-        self.loadButton.grid(row = 2, column = 1, padx = 3, pady = 3)
-        self.startButton.grid(row = 2, column = 2, padx = 3, pady = 3)
-        self.quitButton.grid(row = 2, column = 3, padx = 3, pady = 3)
+        self.canvas.grid(row = 1, columnspan = 3)
+        self.loadButton.grid(row = 2, column = 0, padx = 3, pady = 3)
+        self.startButton.grid(row = 2, column = 1, padx = 3, pady = 3)
+        self.quitButton.grid(row = 2, column = 2, padx = 3, pady = 3)
 
         #photos
-        self.imagesReferences = {}
-
-        #self.imagesReferences[0] = PhotoImage("Ressources/0.png")
-        #self.imagesReferences[1] = PhotoImage("Ressources/1.png")
-        #self.image = PhotoImage("Ressources/1.png")
-        #self.test = None
-        #photo = PhotoImage(file = 'C:/SudokuTemp/Ressources/1.png')
-        #self.canvas.create_image(0,0, image=photo)
+        self.photo = []
+        self.photo.append(PhotoImage(file = "Ressources/0.png"))
+        self.photo.append(PhotoImage(file = "Ressources/1.png"))
+        self.photo.append(PhotoImage(file = "Ressources/2.png"))
+        self.photo.append(PhotoImage(file = "Ressources/3.png"))
+        self.photo.append(PhotoImage(file = "Ressources/4.png"))
+        self.photo.append(PhotoImage(file = "Ressources/5.png"))
+        self.photo.append(PhotoImage(file = "Ressources/6.png"))
+        self.photo.append(PhotoImage(file = "Ressources/7.png"))
+        self.photo.append(PhotoImage(file = "Ressources/8.png"))
+        self.photo.append(PhotoImage(file = "Ressources/9.png"))
         
         self.updateCanvas()
 
@@ -53,26 +55,33 @@ class Window:
         
     def updateCanvas (self):
         """Prints the sudoku matrix"""
-        x = 0
-        y = 0
-        self.canvas.delete(all)
+        self.canvas.delete("all")
+        #self.canvas.children.clear()
+        #self.canvas =  Canvas(self.tkWindow, bg='white', height = self.canvasSize, width = self.canvasSize)
+        #self.canvas.grid(row = 1, columnspan = 3)
+
         #images
-        #for i in range(self.MAX):
-        #    for j in range(self.MAX):
-        #        #photo = PhotoImage(file = "Ressources/1.png")
-        #        #self.imagesReferences[i,j] = self.canvas.create_image(x, y, image = photo) # % SUDO[i,j]))
-        #        #print(self.imagesReferences[i,j])
-        #        print(self.sudoku.matrix[i, j])
-        #        x=x+(self.canvasSize/self.MAX)
-        #        if x%self.canvasSize == 0:
-        #            x=0
-        #            y=y+(self.canvasSize/self.MAX)
-        #self.test = self.canvas.create_image(10, 10, image = self.image)
-        print("\n\n\n\n")
+        x = 33.5
         for i in range(self.MAX):
-            print("\t%d\t%d\t%d\t%d\t%d\t%d\t%d\t%d\t%d\t" %(self.sudoku.matrix[i, 0], self.sudoku.matrix[i, 1], self.sudoku.matrix[i, 2],
-                                                               self.sudoku.matrix[i, 3], self.sudoku.matrix[i, 4], self.sudoku.matrix[i ,5], 
-                                                               self.sudoku.matrix[i, 6], self.sudoku.matrix[i, 7], self.sudoku.matrix[i, 8]))
+            y = 33.5
+            for j in range(self.MAX):
+                self.canvas.create_image(x, y, image = self.photo[self.sudoku.matrix[i, j]])
+                y = y + (self.canvasSize/self.MAX)
+            x = x + (self.canvasSize/self.MAX)
+                
+        #print("\n\n")
+        #for i in range(self.MAX):
+        #    #print("\t%d\t%d\t%d\t|\t%d\t%d\t%d\t|\t%d\t%d\t%d\t" %(self.sudoku.matrix[i, 0], self.sudoku.matrix[i, 1], self.sudoku.matrix[i, 2],
+        #    #                                                   self.sudoku.matrix[i, 3], self.sudoku.matrix[i, 4], self.sudoku.matrix[i ,5], 
+        #    #                                                   self.sudoku.matrix[i, 6], self.sudoku.matrix[i, 7], self.sudoku.matrix[i, 8]))
+        #    #if(i == 2 or i == 5):
+        #    #    print("\t------------------------------------------")
+        #    print(" %d %d %d | %d %d %d | %d %d %d" %(self.sudoku.matrix[i, 0], self.sudoku.matrix[i, 1], self.sudoku.matrix[i, 2],
+        #                                                       self.sudoku.matrix[i, 3], self.sudoku.matrix[i, 4], self.sudoku.matrix[i ,5], 
+        #                                                       self.sudoku.matrix[i, 6], self.sudoku.matrix[i, 7], self.sudoku.matrix[i, 8]))
+        #    if(i == 2 or i == 5):
+        #        print(" ---------------------")
+
         #separators
         for i in range(self.MAX):
             dash=i*self.canvasSize/self.MAX

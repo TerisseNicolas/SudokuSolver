@@ -223,7 +223,6 @@ class Sudoku:
         for j in range (9):
             row = self.colOneMissingFrame(j)
             if(row != -1):
-                print("1 col with missing frame")
                 try:
                     assert row == self.fillOneEmptyFrameCol(j)
                 except AssertionError:
@@ -234,7 +233,6 @@ class Sudoku:
             for j in range(3):
                 row, col = self.blockOneMissingFrame(i*3, j*3)
                 if((row,col) != (-1,-1)):
-                    print("1 block with missing frame")
                     try:
                         assert (row,col) == self.fillOneEmptyFrameBlock(i, j)
                     except AssertionError:
@@ -264,7 +262,7 @@ class Sudoku:
         emptyFrameRowIndex = self.colOneMissingFrame(col)
         if(emptyFrameRowIndex == -1):
             return -1
-        missingNumber = self.missingNumberOneEmptyFrameCol(row)
+        missingNumber = self.missingNumberOneEmptyFrameCol(col)
         if(missingNumber == 0):
             return -1
         self.matrix[emptyFrameRowIndex, col] = missingNumber
@@ -279,4 +277,7 @@ class Sudoku:
             return -1
         self.matrix[emptyFrameBlockIndex[0], emptyFrameBlockIndex[1]] = missingNumber
         return emptyFrameBlockIndex   
-        
+    
+    # =======================================================================================
+    # TwoEmptyFrameStrategyMoveOne Functions ================================================
+    # =======================================================================================
