@@ -28,7 +28,7 @@ class Sudoku:
         a = 1
     def loadContent (self):
         """Loads sudoku data"""
-        fillPersoMatrix(self.matrix)
+        fillPersoMatrix2(self.matrix)
         #fillDefaultMatrix(self.matrix)
         self.emptyFrame = self.emptyFrameNumber()
     def decreaseEmptyFrameNumber (self):
@@ -76,6 +76,12 @@ class Sudoku:
                         if(empty == 1):
                             (x,y) = self.fillOneEmptyFrameBlock(i*3, j*3)
                             if((x,y) != (-1,-1)):
+                                print("fillOneEmptyFrameBlock")
+                                return (x,y)
+                        elif(empty == 2):
+                            (x,y) = self.fillTwoEmptyFrameBlock(i*3, j*3)
+                            if((x,y) != (-1,-1)):
+                                print("fillTwoEmptyFrameBlock")
                                 return (x,y)
             return (-1,-1)
         else:
@@ -213,7 +219,19 @@ class Sudoku:
         if(count == 2):
             return (index1, index2)
         else:
-            return (-1,-1)   
+            return (-1,-1)
+    def blockTwoMissingFrame (self, row, col):
+        """Return the couple ((x1,y1), (x2,y2)) of the missing frames, ((-1,-1), (-1,-1)) otherwise"""
+        index1 = (-1,-1)
+        index2 = (-1,-1)
+        for i in range(3):
+            for j in range(3):
+                if(self.matrix[row + i, col + j] == 0):
+                    if(index1 == (-1,-1)):
+                        index1 = (row+i,col+j)
+                    else:
+                        index2 = (row+i,col+j)
+        return (index1,index2)
 
     # =======================================================================================
     # Validity Functions ====================================================================
@@ -328,6 +346,21 @@ class Sudoku:
                 else:
                     return (number1,k)
         return (0,0)
+    def missingNumberTwoEmptyFrameBlock (self, row, col):
+        """Return the missing number of the block"""
+        number1 = -1
+        for k in range(1, 10):
+            found = False
+            for i in range(3):
+                for j in range(3):
+                    if(self.matrix[row + i, col + j] == k):
+                        found = True
+            if(not found):
+                if(number1 == -1):
+                    number1 = k
+                else:
+                    return (number1, k)
+        return (0,0)
 
     # =======================================================================================
     # Filling Functions ==================================================================
@@ -372,36 +405,36 @@ class Sudoku:
         if((number1,number2) == (0,0)):
             return (-1,-1)
         (col1,col2) = self.rowTwoMissingFrame(row)
-        if((col1,col2) != (-1,-1)):
-            #MoveOne
-            if(self.inColumn(col1, number1) != -1):
-                self.matrix[row, col2] = number1
-                return (row,col2)
-            if(self.inColumn(col2, number1) != -1):
-                self.matrix[row, col1] = number1
-                return(row,col1)
-            if(self.inColumn(col1, number2) != -1):
-                self.matrix[row, col2] = number2
-                return (row, col2)
-            if(self.inColumn(col2, number2) != -1):
-                self.matrix[row,col1] = number2
-                return (row,col2)
-            #MoveTwo
-            block1 = (row - row % 3, col1 - col1 % 3)
-            block2 = (row - row % 3, col2 - col2 % 3)
-            if(self.inBlock(block1[0], block1[1], number1) != (-1,-1)):
-                self.matrix[row, col2] = number1
-                return (row,col2)
-            if(self.inBlock(block2[0], block2[1], number1) != (-1,-1)):
-                self.matrix[row, col1] = number1
-                return (row,col1)
-            if(self.inBlock(block1[0], block1[1], number2) != (-1,-1)):
-                self.matrix[row, col2] = number2
-                return (row,col2)
-            if(self.inBlock(block2[0], block2[1], number2) != (-1,-1)):
-                self.matrix[row, col1] = number2
-                return (row,col1)
+        if((col1,col2) == (-1,-1)):
             return (-1,-1)
+        #MoveOne
+        if(self.inColumn(col1, number1) != -1):
+            self.matrix[row, col2] = number1
+            return (row,col2)
+        if(self.inColumn(col2, number1) != -1):
+            self.matrix[row, col1] = number1
+            return(row,col1)
+        if(self.inColumn(col1, number2) != -1):
+            self.matrix[row, col2] = number2
+            return (row, col2)
+        if(self.inColumn(col2, number2) != -1):
+            self.matrix[row,col1] = number2
+            return (row,col2)
+        #MoveTwo
+        block1 = (row - row % 3, col1 - col1 % 3)
+        block2 = (row - row % 3, col2 - col2 % 3)
+        if(self.inBlock(block1[0], block1[1], number1) != (-1,-1)):
+            self.matrix[row, col2] = number1
+            return (row,col2)
+        if(self.inBlock(block2[0], block2[1], number1) != (-1,-1)):
+            self.matrix[row, col1] = number1
+            return (row,col1)
+        if(self.inBlock(block1[0], block1[1], number2) != (-1,-1)):
+            self.matrix[row, col2] = number2
+            return (row,col2)
+        if(self.inBlock(block2[0], block2[1], number2) != (-1,-1)):
+            self.matrix[row, col1] = number2
+            return (row,col1)
         return (-1,-1)
     def fillTwoEmptyFrameCol(self, col):
         """Return the (row,col) of the filled frame, (-1,-1) otherwise"""
@@ -409,34 +442,58 @@ class Sudoku:
         if((number1,number2) == (-1,-1)):
             retrun (-1,-1)
         (row1,row2) = self.colTwoMissingFrame(col)
-        if((row1,row2) != (-1,-1)):
-            #MoveOne
-            if(self.inRow(row1, number1) != -1):
-                self.matrix[row2, col] = number1
-                return (row2, col)
-            if(self.inRow(row2, number1) != -1):
-                self.matrix[row1, col] = number1
-                return (row1,col)
-            if(self.inRow(row1, number2) != -1):
-                self.matrix[row2, col] = number2
-                return (row2,col)
-            if(self.inRow(row2, number2) != -1):
-                self.matrix[row1, col] = number2
-                return (row1,col)
-            #MoveTwo
-            block1 = (col - col % 3, row1 - row1 % 3)
-            block2 = (col - col % 3, row2 - row2 % 3)
-            if(self.inBlock(block1[0], block1[1], number1) != (-1,-1)):
-                self.matrix[row2, col] = number1
-                return (row2,col)
-            if(self.inBlock(block2[0], block2[1], number1) != (-1,-1)):
-                self.matrix[row1, col] = number1
-                return (row1,col)
-            if(self.inBlock(block1[0], block1[1], number2) != (-1,-1)):
-                self.matrix[row2, col] = number2
-                return (row2,col)
-            if(self.inBlock(block2[0], block2[1], number2) != (-1,-1)):
-                self.matrix[row1, col] = number2
-                return (row1,col)
+        if((row1,row2) == (-1,-1)):
             return (-1,-1)
+        #MoveOne
+        if(self.inRow(row1, number1) != -1):
+            self.matrix[row2, col] = number1
+            return (row2, col)
+        if(self.inRow(row2, number1) != -1):
+            self.matrix[row1, col] = number1
+            return (row1,col)
+        if(self.inRow(row1, number2) != -1):
+            self.matrix[row2, col] = number2
+            return (row2,col)
+        if(self.inRow(row2, number2) != -1):
+            self.matrix[row1, col] = number2
+            return (row1,col)
+        #MoveTwo
+        block1 = (col - col % 3, row1 - row1 % 3)
+        block2 = (col - col % 3, row2 - row2 % 3)
+        if(self.inBlock(block1[0], block1[1], number1) != (-1,-1)):
+            self.matrix[row2, col] = number1
+            return (row2,col)
+        if(self.inBlock(block2[0], block2[1], number1) != (-1,-1)):
+            self.matrix[row1, col] = number1
+            return (row1,col)
+        if(self.inBlock(block1[0], block1[1], number2) != (-1,-1)):
+            self.matrix[row2, col] = number2
+            return (row2,col)
+        if(self.inBlock(block2[0], block2[1], number2) != (-1,-1)):
+            self.matrix[row1, col] = number2
+            return (row1,col)
         return (-1,-1)
+    def fillTwoEmptyFrameBlock(self, row, col):
+        """Return the (row,col) of the filled frame, (-1,-1) otherwise"""
+        (number1,number2) = self.missingNumberTwoEmptyFrameBlock(row, col)
+        if((number1,number2) == (0,0)):
+            return (-1,-1)
+        (pos1,pos2) = self.blockTwoMissingFrame(row, col)
+        if((pos1,pos2) == ((-1,-1),(-1,-1))):
+            return (-1,-1)
+        #MoveOne
+        if(self.inRow(pos1[0], number1) or self.inColumn(pos1[1], number1)):
+            self.matrix[pos2] = number1
+            return pos2
+        if(self.inRow(pos2[0], number1) or self.inColumnn(pos2[1], number1)):
+            self.matrix[pos1] = number1
+            return pos1
+        if(self.inRow(pos1[0], number2) or self.inColumn(pos1[1], number2)):
+            self.matrix[pos2] = number2
+            return pos2
+        if(self.inRow(pos2[0], number2) or self.inColumnn(pos2[1], number2)):
+            self.matrix[pos1] = number2
+            return pos1
+        return (-1,-1)
+        
+        
