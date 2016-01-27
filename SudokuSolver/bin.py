@@ -173,4 +173,49 @@
 #                if((col,row) != (-1,-1)):
 #                    return (row,col)
 #        return (-1,-1)
-            
+
+
+
+    ## TwoEmptyFrameMoveTwo Functions ================================================
+    #def fillTwoEmptyFrameRowMoveTwo(self, row): #, col1, col2):
+    #    """Return the (row,col) of the filled frame, (-1,-1) otherwise"""
+    #    (number1,number2) = self.missingNumberTwoEmptyFrameRow(row)
+    #    if((number1,number2) == (0,0)):
+    #        return (-1,-1)
+    #    (col1,col2) = self.rowTwoMissingFrame(row)
+    #    if((col1,col2) != (-1,-1)):
+    #        block1 = (row - row % 3, col1 - col1 % 3)
+    #        block2 = (row - row % 3, col2 - col2 % 3)
+    #        if(self.inBlock(block1[0], block1[1], number1) != (-1,-1)):
+    #            self.matrix[row, col2] = number1
+    #            return (row,col2)
+    #        if(self.inBlock(block2[0], block2[1], number1) != (-1,-1)):
+    #            self.matrix[row, col1] = number1
+    #            return (row,col1)
+    #        if(self.inBlock(block1[0], block1[1], number2) != (-1,-1)):
+    #            self.matrix[row, col2] = number2
+    #            return (row,col2)
+    #        if(self.inBlock(block2[0], block2[1], number2) != (-1,-1)):
+    #            self.matrix[row, col1] = number2
+    #            return (row,col1)
+    #    return (-1,-1)
+    #def fillTwoEmptyFrameColMoveTwo(self, col, row1, row2):
+    #    """Return the (row,col) of the filled frame, (-1,-1) otherwise"""
+    #    (number1,number2) = self.missingNumberTwoEmptyFrameCol(col)
+    #    if((number1,number2) == (0,0)):
+    #        return (-1,-1)
+    #    block1 = (col - col % 3, row1 - row1 % 3)
+    #    block2 = (col - col % 3, row2 - row2 % 3)
+    #    if(self.inBlock(block1[0], block1[1], number1) != (-1,-1)):
+    #        self.matrix[row2, col] = number1
+    #        return (row2,col)
+    #    if(self.inBlock(block2[0], block2[1], number1) != (-1,-1)):
+    #        self.matrix[row1, col] = number1
+    #        return (row1,col)
+    #    if(self.inBlock(block1[0], block1[1], number2) != (-1,-1)):
+    #        self.matrix[row2, col] = number2
+    #        return (row2,col)
+    #    if(self.inBlock(block2[0], block2[1], number2) != (-1,-1)):
+    #        self.matrix[row1, col] = number2
+    #        return (row1,col)
+    #    return (-1,-1)
