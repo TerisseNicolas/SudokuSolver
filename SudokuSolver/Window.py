@@ -85,6 +85,7 @@ class Window:
         if((a,b) != (-1,-1)):
             unit = self.canvasSize/self.MAX
             self.canvas.create_rectangle(b*unit, a*unit, 67 + b*unit, 67 + a*unit, fill = "red")
+            print("[%d][%d] = %d" % (a, b, self.sudoku.matrix[a,b]))
         for i in range(self.MAX):
             y = 33.5
             for j in range(self.MAX):
