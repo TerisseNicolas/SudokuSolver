@@ -28,15 +28,14 @@ class Sudoku:
         a = 1
     def loadContent (self):
         """Loads sudoku data"""
-        #fillPersoMatrix(self.matrix)
-        fillDefaultMatrix(self.matrix)
+        fillPersoMatrix(self.matrix)
+        #fillDefaultMatrix(self.matrix)
         self.emptyFrame = self.emptyFrameNumber()
     def decreaseEmptyFrameNumber (self):
         """Decrease the number of empty frames"""
         self.emptyFrame -= 1
-    def solve(self):
-        """Return (row,col) couple if an emptyFrame has been filled, (-1,-1) otherwise"""
-        flag = True
+    def solve (self):
+        """Return (row,col) couple if an empty frame has been filled, (-1,-1) otherwise"""
         if(self.emptyFrame != 0):
             (x,y) = (-1,-1)
             try:
@@ -44,18 +43,40 @@ class Sudoku:
             except AssertionError:
                 print ("Matrix not valid anymore")
             else:
-                #(x, y) = self.oneEmptyFrameStrategy()
-                #if((x, y) != (-1, -1)):
-                #    self.decreaseEmptyFrameNumber()
-                #    return (x,y)
-                #(x,y) = self.TwoEmptyFrameStrategyMoveOne()
-                #if((x, y) != (-1, -1)):
-                #    self.decreaseEmptyFrameNumber()
-                #    return (x,y)
-                (x,y) = self.twoEmptyFrameStrategyMoveTwo()
-                if((x, y) != (-1, -1)):
-                    self.decreaseEmptyFrameNumber()
-                    return (x,y)
+                #rows
+                for i in range(9):
+                    empty = self.numberEmptyFrameRow(i)
+                    if(empty == 1):
+                        (x,y) = self.fillOneEmptyFrameRow(i)
+                        if((x,y) != (-1,-1)):
+                            print("fillOneEmptyFrameRow")
+                            return (x,y)
+                    elif(empty == 2):
+                        (x,y) = self.fillTwoEmptyFrameRowMoveOne(i)
+                        if((x,y) != (-1,-1)):
+                            print("fillTwoEmptyFrameRowMoveOne")
+                            return (x,y)
+                #cols
+                for j in range(9):
+                    empty = self.numberEmptyFrameCol(j)
+                    if(empty == 1):
+                        (x,y) = self.fillOneEmptyFrameCol(j)
+                        if((x,y) != (-1,-1)):
+                            print("fillOneEmptyFrameCol")
+                            return (x,y)
+                    elif(empty == 2):
+                        (x,y) = self.fillTwoEmptyFrameColMoveOne(j)
+                        if((x,y) != (-1,-1)):
+                            print("fillTwoEmptyFrameColMoveOne")
+                            return (x,y)
+                #blocks
+                for i in range(3):
+                    for j in range(3):
+                        empty = self.numberEmptyFrameBlock(i*3, j*3)
+                        if(empty == 1):
+                            (x,y) = self.fillOneEmptyFrameBlock(i*3, j*3)
+                            if((x,y) != (-1,-1)):
+                                return (x,y)
             return (-1,-1)
         else:
             return (-1,-1)
@@ -100,6 +121,29 @@ class Sudoku:
         b = index2 - index2 % 3
         return a == b
     
+    def numberEmptyFrameRow (self, row):
+        """Return the number of empty frame in the row"""
+        count = 0
+        for j in range(9):
+            if(self.matrix[row, j] == 0):
+                count += 1
+        return count
+    def numberEmptyFrameCol (self, col):
+        """Return the number of empty frame in the column"""
+        count = 0
+        for i in range(9):
+            if(self.matrix[i, col] == 0):
+                count +=1
+        return count
+    def numberEmptyFrameBlock (self, row, col):
+        """Return the number of empty frame in the block"""
+        count = 0
+        for i in range(3):
+            for j in range(3):
+                if(self.matrix[row + i, col + j] == 0):
+                    count += 1
+        return count
+
     def rowOneMissingFrame (self, row):
         """Return the column index of the frame if only one is missing, -1 otherwise"""
         count = 0
@@ -286,143 +330,87 @@ class Sudoku:
         return (0,0)
 
     # =======================================================================================
-    # Strategies Functions ==================================================================
+    # Filling Functions ==================================================================
     # =======================================================================================
 
-    def oneEmptyFrameStrategy (self):
-        """Return the (row,col) position of the filled frame, (-1,-1) otherwise""" 
-        for i in range (9):
-            col = self.rowOneMissingFrame(i)
-            if(col != -1):
-                try:
-                    assert col == self.fillOneEmptyFrameRow(i)
-                except AssertionError:
-                    print("OneEmptyFrameStrategyError : row")
-                else:
-                    return (i, col)
-        for j in range (9):
-            row = self.colOneMissingFrame(j)
-            if(row != -1):
-                try:
-                    assert row == self.fillOneEmptyFrameCol(j)
-                except AssertionError:
-                    print("OneEmptyFrameStrategyError : col")
-                else:
-                    return (row, j)
-        for i in range (3):
-            for j in range(3):
-                row, col = self.blockOneMissingFrame(i*3, j*3)
-                if((row,col) != (-1,-1)):
-                    try:
-                        assert (row,col) == self.fillOneEmptyFrameBlock(i, j)
-                    except AssertionError:
-                        print("OneEmptyFrameStrategyError : block")
-                    else:
-                        return (row, col)
-        return (-1,-1)
-    def twoEmptyFrameStrategyMoveOne (self):
-        """Return the (row,col) position of the filled frame, (-1,-1) otherwise"""
-        for i in range(9):
-            (col1,col2) = self.rowTwoMissingFrame(i)
-            if((col1,col2) != (-1,-1)):
-                (row,col) = self.fillTwoEmptyFrameRowStrategyMoveOne(i, col1, col2)
-                if((row,col) != (-1,-1)):
-                    return (row,col)
-        for j in range(9):
-            (row1,row2) = self.colTwoMissingFrame(j)
-            if((row1,row2) != (-1,-1)):
-                (row,col) = self.fillTwoEmptyFrameColStrategyMoveOne(j, row1, row2)
-                if((row,col) != (-1,-1)):
-                    return (row,col)
-        return (-1,-1)
-    def twoEmptyFrameStrategyMoveTwo (self):
-        """Return the (row,col) position of the filled frame, (-1,-1) otherwise"""
-        for i in range(9):
-            (col1,col2) = self.rowTwoMissingFrame(i)
-            if((col1,col2) != (-1,-1) and not self.inSameBlock(col1, col2)):
-                (row,col) = self.fillTwoEmptyFrameRowStrategyMoveTwo(i, col1, col2)
-                if((col,row) != (-1,-1)):
-                    return (row,col)
-        for j in range(9):
-            (row1,row2) = self.colTwoMissingFrame(j)
-            if((row1,row2) != (-1,-1) and not self.inSameBlock(row1, row2)):
-                (row,col) = self.fillTwoEmptyFrameColStrategyMoveTwo(j, row1, row2)
-                if((col,row) != (-1,-1)):
-                    return (row,col)
-        return (-1,-1)
-            
-    # OneEmptyFrameStrategy Functions =======================================================
+    # OneEmptyFrame Functions =======================================================
     def fillOneEmptyFrameRow (self, row):
-        """Fill the empty frame of the row, return the col index if succeed, -1 otherwise"""
+        """Return the (row,col) of the filled frame, (-1,-1) otherwise"""
         emptyFrameColIndex = self.rowOneMissingFrame(row)
         if(emptyFrameColIndex == -1):
-            return -1
+            return (-1,-1)
         missingNumber = self.missingNumberOneEmptyFrameRow(row)
         if(missingNumber == 0):
-            return -1
+            return (-1,-1)
         self.matrix[row, emptyFrameColIndex] = missingNumber
-        return emptyFrameColIndex
+        return (row, emptyFrameColIndex)
     def fillOneEmptyFrameCol (self, col):
-        """Fill the empty frame of the col, return the row index if succeed, -1 otherwise"""
+        """Return the (row,col) of the filled frame, (-1,-1) otherwise"""
         emptyFrameRowIndex = self.colOneMissingFrame(col)
         if(emptyFrameRowIndex == -1):
-            return -1
+            return (-1,-1)
         missingNumber = self.missingNumberOneEmptyFrameCol(col)
         if(missingNumber == 0):
-            return -1
+            return (-1,-1)
         self.matrix[emptyFrameRowIndex, col] = missingNumber
-        return emptyFrameRowIndex
+        return (emptyFrameRowIndex, col)
     def fillOneEmptyFrameBlock (self, row, col):
-        """Fill the empty frame of the block, return the (row,col) index if succeed, (-1,-1) otherwise"""
+        """Return the (row,col) of the filled frame, (-1,-1) otherwise"""
         emptyFrameBlockIndex = self.blockOneMissingFrame(row, col)
         if(emptyFrameBlockIndex == (-1,-1)):
-            return -1
+            return (-1,-1)
         missingNumber = self.missingNumberOneEmptyFrameBlock(row, col)
         if(missingNumber == 0):
-            return -1
+            return (-1,-1)
         self.matrix[emptyFrameBlockIndex[0], emptyFrameBlockIndex[1]] = missingNumber
         return emptyFrameBlockIndex   
     
-    # TwoEmptyFrameStrategyMoveOne Functions ================================================
-    def fillTwoEmptyFrameRowStrategyMoveOne(self, row, col1, col2):
+    # TwoEmptyFrameMoveOne Functions ================================================
+    def fillTwoEmptyFrameRowMoveOne(self, row):
         """Return the (row,col) of the filled frame, (-1,-1) otherwise"""
         (number1,number2) = self.missingNumberTwoEmptyFrameRow(row)
         if((number1,number2) == (0,0)):
             return (-1,-1)
-        if(self.inColumn(col1, number1)):
-            self.matrix[row, col2] = number1
-            return (row,col2)
-        if(self.inColumn(col2, number1)):
-            self.matrix[row, col1] = number1
-            return(row,col1)
-        if(self.inColumn(col1, number2)):
-            self.matrix[row, col2] = number2
-            return (row, col2)
-        if(self.inColumn(col2, number2)):
-            self.matrix[row,col1] = number2
-            return (row,col2)
+        (col1,col2) = self.rowTwoMissingFrame(row)
+        if((col1,col2) != (-1,-1)):
+            if(self.inColumn(col1, number1) != -1):
+                self.matrix[row, col2] = number1
+                return (row,col2)
+            if(self.inColumn(col2, number1) != -1):
+                self.matrix[row, col1] = number1
+                return(row,col1)
+            if(self.inColumn(col1, number2) != -1):
+                self.matrix[row, col2] = number2
+                return (row, col2)
+            if(self.inColumn(col2, number2) != -1):
+                self.matrix[row,col1] = number2
+                return (row,col2)
+            return (-1,-1)
         return (-1,-1)
-    def fillTwoEmptyFrameColStrategyMoveOne(self, col, row1, row2):
+    def fillTwoEmptyFrameColMoveOne(self, col):
         """Return the (row,col) of the filled frame, (-1,-1) otherwise"""
         (number1,number2) = self.missingNumberTwoEmptyFrameCol(col)
         if((number1,number2) == (-1,-1)):
             retrun (-1,-1)
-        if(self.inRow(row1, number1)):
-            self.matrix[row2, col] = number1
-            return (row2, col)
-        if(self.inRow(row2, number1)):
-            self.matrix[row1, col] = number1
-            return (row1,col)
-        if(self.inRow(row1, number2)):
-            self.matrix[row2, col] = number2
-            return (row2,col)
-        if(self.inRow(row2, number2)):
-            self.matrix[row1, col] = number2
-            return (row1,col)
+        (row1,row2) = self.colTwoMissingFrame(col)
+        if((row1,row2) != (-1,-1)):
+            if(self.inRow(row1, number1) != -1):
+                self.matrix[row2, col] = number1
+                return (row2, col)
+            if(self.inRow(row2, number1) != -1):
+                self.matrix[row1, col] = number1
+                return (row1,col)
+            if(self.inRow(row1, number2) != -1):
+                self.matrix[row2, col] = number2
+                return (row2,col)
+            if(self.inRow(row2, number2) != -1):
+                self.matrix[row1, col] = number2
+                return (row1,col)
+            return (-1,-1)
         return (-1,-1)
 
-    # TwoEmptyFrameStrategyMoveTwo Functions ================================================
-    def fillTwoEmptyFrameRowStrategyMoveTwo(self, row, col1, col2):
+    # TwoEmptyFrameMoveTwo Functions ================================================
+    def fillTwoEmptyFrameRowMoveTwo(self, row, col1, col2):
         """Return the (row,col) of the filled frame, (-1,-1) otherwise"""
         (number1,number2) = self.missingNumberTwoEmptyFrameRow(row)
         if((number1,number2) == (0,0)):
@@ -442,7 +430,7 @@ class Sudoku:
             self.matrix[row, col1] = number2
             return (row,col1)
         return (-1,-1)
-    def fillTwoEmptyFrameColStrategyMoveTwo(self, col, row1, row2):
+    def fillTwoEmptyFrameColMoveTwo(self, col, row1, row2):
         """Return the (row,col) of the filled frame, (-1,-1) otherwise"""
         (number1,number2) = self.missingNumberTwoEmptyFrameCol(col)
         if((number1,number2) == (0,0)):
