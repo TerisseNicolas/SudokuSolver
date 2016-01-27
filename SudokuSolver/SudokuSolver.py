@@ -9,7 +9,5 @@ def main():
     sudoku = Sudoku()
     window = Window("SudokuSolver", SUDOCANVASSIZE, sudoku)
 
-    window.tkWindow.mainloop()
-
 if __name__ == '__main__':
     main()

@@ -11,7 +11,8 @@ class Sudoku:
         self.isComplet = False
         self.emptyFrame = 0
         self.matrix = {}
-        self.randomContent()
+        #self.randomContent()
+        self.loadContent()
     def randomContent (self):
         for i in range(9):
             for j in range(9):
