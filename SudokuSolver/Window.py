@@ -1,5 +1,4 @@
 from tkinter import *
-from DataWindow import *
 
 class Window:
     """Window of the application"""
@@ -74,7 +73,7 @@ class Window:
             unit = self.canvasSize/self.MAX
             x = int((x - x % 67) / unit)
             y = int((y - y % 67) / unit)
-            self.sudoku.matrix[x, y] = (self.sudoku.matrix[x, y] +1) % 9
+            self.sudoku.matrix[x, y] = (self.sudoku.matrix[x, y] +1) % 10
             self.updateCanvas(-1,-1)
 
     def updateLess(self, event):
