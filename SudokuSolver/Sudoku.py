@@ -96,10 +96,15 @@ class Sudoku:
                             if((x,y) != (-1,-1)):
                                 print("fillOneEmptyFrameBlock")
                                 return (x,y)
-                        elif(empty == 2):
-                            (x,y) = self.fillTwoEmptyFrameBlock(i*3, j*3)
+                        #elif(empty == 2):
+                        #    (x,y) = self.fillTwoEmptyFrameBlock(i*3, j*3)
+                        #    if((x,y) != (-1,-1)):
+                        #        print("fillTwoEmptyFrameBlock")
+                        #        return (x,y)
+                        else:
+                            (x,y) = self.fillThreeMoreEmptyFrameBlock(i*3, j*3)
                             if((x,y) != (-1,-1)):
-                                print("fillTwoEmptyFrameBlock")
+                                print("fillThreeMoreEmptyFrameBlock")
                                 return (x,y)
             return (-1,-1)
         else:
@@ -430,8 +435,8 @@ class Sudoku:
         numbers = []
         for k in range(1, 10):
             found = False
-            for i in range(9):
-                for j in range(9):
+            for i in range(3):
+                for j in range(3):
                     if(self.matrix[row + i, col + j] == k):
                         found = True
             if(not found):
@@ -496,7 +501,7 @@ class Sudoku:
             return (row, col2)
         if(self.inColumn(col2, number2) != -1):
             self.matrix[row,col1] = number2
-            return (row,col2)
+            return (row,col1)
         #MoveTwo
         block1 = (row - row % 3, col1 - col1 % 3)
         block2 = (row - row % 3, col2 - col2 % 3)
@@ -577,7 +582,7 @@ class Sudoku:
     def fillThreeMoreEmptyFrameRow(self, row):
         """Return the (row,col) of the filled frame, (-1,-1) otherwise"""
         numbers = self.missingNumberThreeMoreFrameRow(row)
-        if(numbers.count == 0):
+        if(len(numbers) == 0):
             return (-1,-1)
         indexes = self.rowThreeMoreMissingFrame(row)
         if(len(indexes) != len(numbers)):
@@ -597,7 +602,7 @@ class Sudoku:
     def fillThreeMoreEmptyFrameCol(self, col):
         """Return the (row,col) of the filled frame, (-1,-1) otherwise"""
         numbers = self.missingNumberThreeMoreFrameCol(col)
-        if(numbers.count == 0):
+        if(len(numbers) == 0):
             return (-1,-1)
         indexes = self.colThreeMoreMissingFrame(col)
         if(len(indexes) != len(numbers)):
@@ -614,4 +619,23 @@ class Sudoku:
                 self.matrix[possibilityIndex, col] = n
                 return (possibilityIndex, col)
         return (-1,-1)
-        
+    def fillThreeMoreEmptyFrameBlock(self, row, col):
+        """Return the (row,col) of the filled frame, (-1,-1) otherwise"""
+        numbers = self.missingNumberThreeMoreFrameBlock(row, col)
+        if(len(numbers) == 0):
+            return (-1,-1)
+        indexes = self.blockThreeMoreMissingFrame(row, col)
+        if(len(indexes) != len(numbers)):
+            return (-1,-1)
+        #MoveOne
+        for n in numbers:
+            possibility = 0
+            possibilityIndex = (-1,-1)
+            for (i,j) in indexes:
+                if((self.inRow(i, n) == -1 ) and (self.inColumn(j, n) == -1)):
+                    possibility += 1
+                    possibilityIndex = (i,j)
+            if(possibility == 1):
+                self.matrix[possibilityIndex[0],possibilityIndex[1]] = n
+                return (possibilityIndex[0],possibilityIndex[1])
+        return (-1,-1)
