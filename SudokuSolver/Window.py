@@ -117,7 +117,7 @@ class Window:
             (x,y) = self.sudoku.solve()
             if((x,y) != (-1,-1)):
                 self.updateCanvas(x, y)
-                self.tkWindow.after(1000, self.sudokuSolving)
+                self.tkWindow.after(50, self.sudokuSolving)
             else:
                 self.stop()
         
