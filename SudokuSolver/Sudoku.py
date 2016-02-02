@@ -17,7 +17,12 @@ class Sudoku:
         for i in range(9):
             for j in range(9):
                 randomf = random.choice(range(100)) % 10
-                self.matrix[i,j] = randomf   
+                self.matrix[i,j] = randomf
+    def clearContent (self):
+        """Empty all frames of the sudoku"""
+        for i in range(9):
+            for j in range(9):
+                self.matrix[i,j] = 0
     def loadContent2 (self):
         """Loads sudoku data"""
         #for i in range(9):

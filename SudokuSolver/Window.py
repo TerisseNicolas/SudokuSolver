@@ -14,6 +14,7 @@ class Window:
         self.waiting = True
         self.satusLabel = Label(self.tkWindow, text = "Status: Waiting")
         self.editButton = Button(self.tkWindow, text = "Edit data", command = self.loadSudoku)
+        self.clearButton = Button(self.tkWindow, text = "Clear data", state = DISABLED, command = self.clearSudoku)
         self.startButton = Button(self.tkWindow, text = "Start",  state = DISABLED, command = self.start)
         self.stopButton = Button(self.tkWindow, text = "Stop", state = DISABLED, command = self.stop)
         self.quitButton = Button(self.tkWindow, text=  "Quit", command = self.tkWindow.destroy)
@@ -28,12 +29,13 @@ class Window:
         self.tkWindow.minsize(width = width, height= width + 40)
 
         #widgets positionnement
-        self.canvas.grid(row = 1, columnspan = 5)
+        self.canvas.grid(row = 1, columnspan = 6)
         self.satusLabel.grid(row = 2, column = 0, padx = 3, pady = 3)
         self.editButton.grid(row = 2, column = 1, padx = 3, pady = 3)
-        self.startButton.grid(row = 2, column = 2, padx = 3, pady = 3)
-        self.stopButton.grid(row = 2, column = 3, padx = 3, pady = 3)
-        self.quitButton.grid(row = 2, column = 4, padx = 3, pady = 3)
+        self.clearButton.grid(row = 2, column = 2, padx = 3, pady = 3)
+        self.startButton.grid(row = 2, column = 3, padx = 3, pady = 3)
+        self.stopButton.grid(row = 2, column = 4, padx = 3, pady = 3)
+        self.quitButton.grid(row = 2, column = 5, padx = 3, pady = 3)
 
         #photos
         self.photo = []
@@ -58,12 +60,20 @@ class Window:
             self.satusLabel.config(text = "Status : Editing")
             self.editButton.config(text = "Confirm")
             self.startButton.config(state = DISABLED)
+            self.clearButton.config(state = NORMAL)
         else:
             self.waiting = True
             self.startButton.config(state = NORMAL)
+            self.clearButton.config(state = DISABLED)
             self.satusLabel.config(text = "Status : Waiting")
             self.editButton.config(text = "Edit data")
             #self.updateCanvas(-1, -1)
+
+    def clearSudoku(self):
+        """Clear all sudoku content"""
+        if(not self.waiting and not self.processing):
+            self.sudoku.clearContent()
+            self.updateCanvas(-1, -1)
 
     def updatePlus(self, event):
         """Update the number in the frame"""
