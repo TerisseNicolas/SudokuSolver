@@ -61,7 +61,13 @@ class Sudoku:
                             print("fillOneEmptyFrameRow")
                             return (x,y)
                     else:
-                        (x,y) = self.fillEmptyFrameRow(i)
+                        numbers = self.missingNumberFrameRow(i)
+                        if(len(numbers) == 0):
+                            return (-1,-1)
+                        indexes = self.rowMissingFrame(i)
+                        if(len(indexes) != len(numbers)):
+                            return (-1,-1)
+                        (x,y) = self.fillEmptyFrameRow(i, numbers, indexes)
                         if((x,y) != (-1,-1)):
                             print("fillEmptyFrameRow")
                             return (x,y)
@@ -81,7 +87,13 @@ class Sudoku:
                             print("fillOneEmptyFrameCol")
                             return (x,y)
                     else:
-                        (x,y) = self.fillEmptyFrameCol(j)
+                        numbers = self.missingNumberFrameCol(j)
+                        if(len(numbers) == 0):
+                            return (-1,-1)
+                        indexes = self.colMissingFrame(j)
+                        if(len(indexes) != len(numbers)):
+                            return (-1,-1)
+                        (x,y) = self.fillEmptyFrameCol(j, numbers, indexes)
                         if((x,y) != (-1,-1)):
                             print("fillEmptyFrameCol")
                             return (x,y)
@@ -107,7 +119,13 @@ class Sudoku:
                         #        print("fillTwoEmptyFrameBlock")
                         #        return (x,y)
                         else:
-                            (x,y) = self.fillEmptyFrameBlock(i*3, j*3)
+                            numbers = self.missingNumberFrameBlock(i*3, j*3)
+                            if(len(numbers) == 0):
+                                return (-1,-1)
+                            indexes = self.blockMissingFrame(i*3, j*3)
+                            if(len(indexes) != len(numbers)):
+                                return (-1,-1)
+                            (x,y) = self.fillEmptyFrameBlock(i*3, j*3, numbers, indexes)
                             if((x,y) != (-1,-1)):
                                 print("fillEmptyFrameBlock")
                                 return (x,y)
@@ -469,14 +487,8 @@ class Sudoku:
         return (-1,-1)
         
     #EmptyFrame Functions ===================================================================
-    def fillEmptyFrameRow(self, row):
+    def fillEmptyFrameRow(self, row, numbers, indexes):
         """Return the (row,col) of the filled frame, (-1,-1) otherwise"""
-        numbers = self.missingNumberFrameRow(row)
-        if(len(numbers) == 0):
-            return (-1,-1)
-        indexes = self.rowMissingFrame(row)
-        if(len(indexes) != len(numbers)):
-            return (-1,-1)
         #MoveOne
         for n in numbers:
             possibility = 0
@@ -489,14 +501,8 @@ class Sudoku:
                 self.matrix[row, possibilityIndex] = n
                 return (row, possibilityIndex)
         return (-1,-1)
-    def fillEmptyFrameCol(self, col):
+    def fillEmptyFrameCol(self, col, numbers, indexes):
         """Return the (row,col) of the filled frame, (-1,-1) otherwise"""
-        numbers = self.missingNumberFrameCol(col)
-        if(len(numbers) == 0):
-            return (-1,-1)
-        indexes = self.colMissingFrame(col)
-        if(len(indexes) != len(numbers)):
-            return (-1,-1)
         #MoveOne
         for n in numbers:
             possibility = 0
@@ -509,14 +515,8 @@ class Sudoku:
                 self.matrix[possibilityIndex, col] = n
                 return (possibilityIndex, col)
         return (-1,-1)
-    def fillEmptyFrameBlock(self, row, col):
+    def fillEmptyFrameBlock(self, row, col, numbers, indexes):
         """Return the (row,col) of the filled frame, (-1,-1) otherwise"""
-        numbers = self.missingNumberFrameBlock(row, col)
-        if(len(numbers) == 0):
-            return (-1,-1)
-        indexes = self.blockMissingFrame(row, col)
-        if(len(indexes) != len(numbers)):
-            return (-1,-1)
         #MoveOne
         for n in numbers:
             possibility = 0
