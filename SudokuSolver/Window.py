@@ -1,5 +1,7 @@
 from tkinter import *
 
+SPEED = 10000
+
 class Window:
     """Window of the application"""
 
@@ -16,6 +18,7 @@ class Window:
         self.editButton = Button(self.tkWindow, text = "Edit data", command = self.loadSudoku)
         self.clearButton = Button(self.tkWindow, text = "Clear data", state = DISABLED, command = self.clearSudoku)
         self.startButton = Button(self.tkWindow, text = "Start",  state = DISABLED, command = self.start)
+        self.speedScale = Scale(self.tkWindow, from_ = 50, to = 5000, label = 'Process speed', resolution = 50, variable = 2000, length = 150, orient = HORIZONTAL, command = self.updateSpeed)
         self.stopButton = Button(self.tkWindow, text = "Stop", state = DISABLED, command = self.stop)
         self.quitButton = Button(self.tkWindow, text=  "Quit", command = self.tkWindow.destroy)
         self.canvasSize = width
@@ -29,13 +32,14 @@ class Window:
         self.tkWindow.minsize(width = width, height= width + 40)
 
         #widgets positionnement
-        self.canvas.grid(row = 1, columnspan = 6)
-        self.satusLabel.grid(row = 2, column = 0, padx = 3, pady = 3)
+        self.canvas.grid(row = 1, columnspan = 5)
+        self.satusLabel.grid(row = 2, rowspan = 2, column = 0, padx = 3, pady = 3)
         self.editButton.grid(row = 2, column = 1, padx = 3, pady = 3)
-        self.clearButton.grid(row = 2, column = 2, padx = 3, pady = 3)
-        self.startButton.grid(row = 2, column = 3, padx = 3, pady = 3)
-        self.stopButton.grid(row = 2, column = 4, padx = 3, pady = 3)
-        self.quitButton.grid(row = 2, column = 5, padx = 3, pady = 3)
+        self.clearButton.grid(row = 3, column = 1, padx = 3, pady = 3)
+        self.startButton.grid(row = 2, column = 2, padx = 3, pady = 3)
+        self.stopButton.grid(row = 3, column = 2, padx = 3, pady = 3)
+        self.speedScale.grid(row = 2, rowspan = 2, column = 3, padx = 3, pady = 3)
+        self.quitButton.grid(row = 2, rowspan = 2, column = 4, padx = 3, pady = 3)
 
         #photos
         self.photo = []
@@ -67,8 +71,6 @@ class Window:
             self.clearButton.config(state = DISABLED)
             self.satusLabel.config(text = "Status : Waiting")
             self.editButton.config(text = "Edit data")
-            #self.updateCanvas(-1, -1)
-
     def clearSudoku(self):
         """Clear all sudoku content"""
         if(not self.waiting and not self.processing):
@@ -85,7 +87,6 @@ class Window:
             y = int((y - y % 67) / unit)
             self.sudoku.matrix[x, y] = (self.sudoku.matrix[x, y] +1) % 10
             self.updateCanvas(-1,-1)
-
     def updateLess(self, event):
         """Update the number in the frame"""
         if(not self.processing and not self.waiting):
@@ -100,6 +101,10 @@ class Window:
                 new = 9
             self.sudoku.matrix[x, y] = new
             self.updateCanvas(-1,-1)
+    def updateSpeed(self, event):
+        """Update the processing spped"""
+        global SPEED
+        SPEED = self.speedScale.get()
 
     def start (self):
         """Launch the solving process"""
@@ -110,7 +115,6 @@ class Window:
         self.startButton.config(state = DISABLED)
         self.stopButton.config(state = NORMAL)
         self.sudokuSolving()
-
     def stop (self):
         """Stop the solving process"""
         self.processing = False
@@ -123,14 +127,14 @@ class Window:
 
     def sudokuSolving (self):
         """Iteration in the sudoku solving process"""
+        global SPEED
         if(self.processing):
             (x,y) = self.sudoku.solve()
             if((x,y) != (-1,-1)):
                 self.updateCanvas(x, y)
-                self.tkWindow.after(50, self.sudokuSolving)
+                self.tkWindow.after(SPEED, self.sudokuSolving)
             else:
-                self.stop()
-        
+                self.stop()   
     def updateCanvas (self, a, b):
         """Prints the sudoku matrix"""
         self.canvas.delete("all")
