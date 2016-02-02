@@ -72,7 +72,7 @@ class Sudoku:
                             print("fillEmptyFrameRow")
                             return (x,y)
                         if(empty == 2):
-                            (x,y) = self.fillTwoEmptyFrameRow(i)
+                            (x,y) = self.fillTwoEmptyFrameRow(i, numbers, indexes)
                             if((x,y) != (-1,-1)):
                                 print("fillTwoEmptyFrameRow")
                                 return (x,y)
@@ -98,7 +98,7 @@ class Sudoku:
                             print("fillEmptyFrameCol")
                             return (x,y)
                         if(empty == 2):
-                            (x,y) = self.fillTwoEmptyFrameCol(j)
+                            (x,y) = self.fillTwoEmptyFrameCol(j, numbers, indexes)
                             if((x,y) != (-1,-1)):
                                 print("fillTwoEmptyFrameCol")
                                 return (x,y)
@@ -414,74 +414,49 @@ class Sudoku:
         return emptyFrameBlockIndex   
     
     # TwoEmptyFrame Functions ===============================================================
-    def fillTwoEmptyFrameRow(self, row):
+    def fillTwoEmptyFrameRow(self, row, numbers, indexes):
         """Return the (row,col) of the filled frame, (-1,-1) otherwise"""
-        numbers = self.missingNumberFrameRow(row)
-        if(len(numbers) != 2):
-            return (-1,-1)
-        indexes = self.rowMissingFrame(row)
-        if(len(indexes) != 2):
-            return (-1,-1)
         #Specific Move One
-        #block1 = (row - row % 3, indexes[0] - indexes[0] % 3)
-        #block2 = (row - row % 3, indexes[1] - indexes[1] % 3)
-        #if(self.inBlock(block1[0], block1[1], numbers[0]) != (-1,-1)):
-        #    self.matrix[row, indexes[1]] = numbers[0]
-        #    return (row,indexes[1])
-        #if(self.inBlock(block2[0], block2[1], numbers[0]) != (-1,-1)):
-        #    self.matrix[row, indexes[0]] = numbers[0]
-        #    return (row,indexes[0])
-        #if(self.inBlock(block1[0], block1[1], numbers[1]) != (-1,-1)):
-        #    self.matrix[row, indexes[1]] = numbers[1]
-        #    return (row,indexes[1])
-        #if(self.inBlock(block2[0], block2[1], numbers[1]) != (-1,-1)):
-        #    self.matrix[row, indexes[0]] = numbers[1]
-        #    return (row,indexes[0])
+        block1 = (row - row % 3, indexes[0] - indexes[0] % 3)
+        block2 = (row - row % 3, indexes[1] - indexes[1] % 3)
+        if(block1 == block2):
+            return (-1,-1)
+        if(self.inBlock(block1[0], block1[1], numbers[0]) != (-1,-1)):
+            self.matrix[row, indexes[1]] = numbers[0]
+            return (row,indexes[1])
+        if(self.inBlock(block2[0], block2[1], numbers[0]) != (-1,-1)):
+            self.matrix[row, indexes[0]] = numbers[0]
+            return (row,indexes[0])
+        if(self.inBlock(block1[0], block1[1], numbers[1]) != (-1,-1)):
+            self.matrix[row, indexes[1]] = numbers[1]
+            return (row,indexes[1])
+        if(self.inBlock(block2[0], block2[1], numbers[1]) != (-1,-1)):
+            self.matrix[row, indexes[0]] = numbers[1]
+            return (row,indexes[0])
         return (-1,-1)
-    def fillTwoEmptyFrameCol(self, col):
+    def fillTwoEmptyFrameCol(self, col, numbers, indexes):
         """Return the (row,col) of the filled frame, (-1,-1) otherwise"""
-        numbers = self.missingNumberFrameCol(col)
-        if(len(numbers) != 2):
-            return (-1,-1)
-        indexes = self.colMissingFrame(col)
-        if(len(indexes) != len(numbers)):
-            return (-1,-1)
         #Specific Move One
-        #block1 = (col - col % 3, indexes[0] - indexes[0] % 3)
-        #block2 = (col - col % 3, indexes[1] - indexes[1] % 3)
-        #print("block")
-        #print(block1)
-        #print(block2)
-        #print("numbers")
-        #print(numbers)
-        #print("indexes")
-        #print(indexes)
-        #if(self.inBlock(block1[0], block1[1], numbers[0]) != (-1,-1)):
-        #    print("case1")
-        #    print(self.inBlock(block1[0], block1[1], numbers[0]))
-        #    self.matrix[indexes[1], col] = numbers[0]
-        #    return (indexes[1],col)
-        #if(self.inBlock(block2[0], block2[1], numbers[0]) != (-1,-1)):
-        #    print("case2")
-        #    self.matrix[indexes[0], col] = numbers[0]
-        #    return (indexes[0],col)
-        #if(self.inBlock(block1[0], block1[1], numbers[1]) != (-1,-1)):
-        #    print("case3")
-        #    self.matrix[indexes[1], col] = numbers[1]
-        #    return (indexes[1],col)
-        #if(self.inBlock(block2[0], block2[1], numbers[1]) != (-1,-1)):
-        #    print("case4")
-        #    self.matrix[indexes[0], col] = numbers[1]
-        #    return (indexes[0],col)
+        block1 = (indexes[0] - indexes[0] % 3, col - col % 3)
+        block2 = (indexes[1] - indexes[1] % 3, col - col % 3)
+        if(block1 == block2):
+            return (-1,-1)
+        if(self.inBlock(block1[0], block1[1], numbers[0]) != (-1,-1)):
+            print(self.inBlock(block1[0], block1[1], numbers[0]))
+            self.matrix[indexes[1], col] = numbers[0]
+            return (indexes[1],col)
+        if(self.inBlock(block2[0], block2[1], numbers[0]) != (-1,-1)):
+            self.matrix[indexes[0], col] = numbers[0]
+            return (indexes[0],col)
+        if(self.inBlock(block1[0], block1[1], numbers[1]) != (-1,-1)):
+            self.matrix[indexes[1], col] = numbers[1]
+            return (indexes[1],col)
+        if(self.inBlock(block2[0], block2[1], numbers[1]) != (-1,-1)):
+            self.matrix[indexes[0], col] = numbers[1]
+            return (indexes[0],col)
         return (-1,-1)    
-    def fillTwoEmptyFrameBlock(self, row, col):
+    def fillTwoEmptyFrameBlock(self, row, col, numbers, indexes):
         """Return the (row,col) of the filled frame, (-1,-1) otherwise"""
-        numbers = self.missingNumberFrameBlock(row, col)
-        if(len(numbers) == 0):
-            return (-1,-1)
-        indexes = self.blockMissingFrame(row, col)
-        if(len(indexes) != len(numbers)):
-            return (-1,-1)
         #Specific Move One
         #None
         return (-1,-1)
